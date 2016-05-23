@@ -1,4 +1,4 @@
-require 'test-unit'
+require 'test/unit'
 require 'selenium-webdriver'
 
 class TestLogin < Test::Unit::TestCase
@@ -11,17 +11,17 @@ class TestLogin < Test::Unit::TestCase
   def test_userlogin
     @browser.navigate.to 'http://demo.redmine.org'
     @browser.find_element(:class, 'login').click
-    assert_equal('http://demo.redmine.org/login', @browser.current_url)
+    @wait.until{@browser.find_element(:id, 'username').displayed?}
     @browser.find_element(:id, 'username').send_keys 'UserUser'
     @browser.find_element(:id, 'password').send_keys '1234567asd'
     @browser.find_element(:name, 'login').click
-    assert('Logged in as')
-    test_log_out
-  end
-
-  def test_log_out
+    @wait.until{@browser.find_element(:id, 'loggedas').displayed?}
     @browser.find_element(:class, 'logout').click
     @wait.until{@browser.find_element(:id, 'login').displayed?}
-    assert('Register')
+    assert(@browser.find_element(:id, 'registration').displayed?)
+  end
+
+  def teardown
+    @browser.quit
   end
 end
